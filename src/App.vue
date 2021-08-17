@@ -10,14 +10,14 @@
         </button>
       </div>
       <div :class="[$style.content]">
-        <payments-display :list="listOnPage" :elsPerPage="paymentsPerPage"/>
+        <payments-display :list="paymentsList" :elsPerPage="paymentsPerPage"/>
       </div>
       <div :class="[$style.content]">
-        <pagination :elsPerPage="paymentsPerPage" :allEls="paymentsList.length" @goToPage="onGoToPage" :cur="curPage"/>
+        <pagination :elsPerPage="paymentsPerPage" @goToPage="onGoToPage" :cur="curPage"/>
       </div>
-      <div :class="[$style.content]">
-        Total: {{ totalValue }}
-      </div>
+      <!--<div :class="[$style.content]">
+        Total: {{ getFPV }}
+      </div>-->
       <div :class="[$style.content]" v-if="show">
         <add-payment-form @addNewPayment="addData"/>
       </div>
@@ -26,9 +26,10 @@
 </template>
 
 <script>
+import { mapMutations, mapGetters, mapActions } from 'vuex';
 import AddPaymentForm from './components/AddPaymentForm.vue';
 import PaymentsDisplay from './components/PaymentsDisplay.vue';
-import Pagination from './components/Pagination.vue'
+import Pagination from './components/Pagination.vue';
 
 export default {
   name: 'App',
@@ -39,24 +40,37 @@ export default {
   },
   data(){
     return{
-      paymentsList: [],
+      //paymentsList: [],
       show: false,
       paymentsPerPage: 3,
-      curPage: 1,
+      //curPage: 1,
     }
   },
   computed: {
-    totalValue(){
-      return this.paymentsList.reduce((acc, cur) => acc + cur.value, 0)
+    ...mapGetters({
+      //paymentsList:'getPaymentsList',
+    }),
+    paymentsList() {
+      return this.$store.getters.getPaymentsListOnPage(this.$store.state.page)
     },
-    listOnPage() {
-      const {paymentsPerPage, curPage} = this
-      return this.paymentsList.slice(paymentsPerPage*(curPage-1), paymentsPerPage*curPage)
-    }
+    curPage() {
+      return this.$store.state.page
+    },
+    /*getFPV(){
+      return this.$store.getters.getFullPaymentValue
+    }*/
   },
   methods:{
+    ...mapMutations({
+      loadData: 'setPaymentListData',
+      addDataToStore: 'addDataToPaymentList',
+      setPage: 'setPage' 
+    }),
+    ...mapActions({
+      fetchListData: 'fetchData'
+    }),
     addData(newPayment){
-      this.paymentsList.push(newPayment)
+      this.addDataToStore(newPayment)
       console.log(newPayment)
     },
     fetchData(){
@@ -82,16 +96,17 @@ export default {
       this.show = !this.show;
     },
     onGoToPage(page){
-      this.curPage = page
+      //this.curPage = page
+      this.setPage(page)
     }
   },
   created(){
-    this.paymentsList = this.fetchData()
-    this.paymentsList.forEach((el, id) => { el.id = id+1 })
+    //this.paymentsList = this.fetchData()
+    //this.$store.commit('setPaymentListData', this.fetchData())
+    //this.loadData(this.fetchData())
+    //this.$store.dispatch('fetchData')
+    this.fetchListData()
   },
-  beforeUpdate(){
-    this.paymentsList.forEach((el, id) => { el.id = id+1 })
-  }
 }
 </script>
 
