@@ -18,6 +18,9 @@
       <!--<div :class="[$style.content]">
         Total: {{ getFPV }}
       </div>-->
+      <div :class="[$style.content]">
+        <add-category-form />
+      </div>
       <div :class="[$style.content]" v-if="show">
         <add-payment-form @addNewPayment="addData"/>
       </div>
@@ -30,13 +33,15 @@ import { mapMutations, mapGetters, mapActions } from 'vuex';
 import AddPaymentForm from './components/AddPaymentForm.vue';
 import PaymentsDisplay from './components/PaymentsDisplay.vue';
 import Pagination from './components/Pagination.vue';
+import AddCategoryForm from './components/AddCategoryForm.vue';
 
 export default {
   name: 'App',
   components: {
     PaymentsDisplay,
     AddPaymentForm,
-    Pagination
+    Pagination,
+    AddCategoryForm,
   },
   data(){
     return{

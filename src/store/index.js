@@ -22,7 +22,10 @@ export default new Vuex.Store({
         },
         setPage(state, payload){
             state.page = payload
-        }
+        },
+        setNewCategory(state, payload) {
+            state.categories.push(payload)
+        },
     },
     getters: {
         getPaymentsList: state => state.paymentsList,
