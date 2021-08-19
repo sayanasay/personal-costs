@@ -15,19 +15,16 @@ export default {
     name: 'Pagination',
     props: {
         elsPerPage: Number,
-        /*allEls: {
+        allEls: {
             type: Number,
             default: () => 3
-        },*/
+        },
         cur: Number,
     },
     computed: {
-        /*pages() {
+        pages() {
             return Math.ceil(this.allEls/this.elsPerPage)
-        }*/
-        pages() { 
-            return this.$store.getters.getPageNumbers
-        }
+        },
     },
     methods: {
         choosePage(page) {

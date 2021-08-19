@@ -20,7 +20,7 @@ export default new Vuex.Store({
         setCategoriesData(state, payload){
             state.categories = payload
         },
-        setPage(state, payload){
+        setPaymentsPage(state, payload){
             state.page = payload
         },
         setNewCategory(state, payload) {
@@ -36,19 +36,18 @@ export default new Vuex.Store({
         getPaymentsListOnPage: (state, getters) => (page) => {
             return getters.getPaymentsList[`page${page}`]
         },
-        getPageNumbers: state => Object.keys(state.paymentsList).length
     },
     actions: {
         fetchCategoryList({commit}){
             return new Promise((resolve) =>{
                 setTimeout(() => {
-                    const categories = ['Sport', 'Food', 'Education', 'Internet', 'Other']
+                    const categories = ['Sport', 'Food', 'Education', 'Internet', 'Transport', 'Other']
                     resolve(categories)
-                }, 2000)
+                }, 0)
             })
             .then(res => commit('setCategoriesData', res))
         },
-        /*fetchData({commit}){
+        fetchData({commit}){
             if(this.state.paymentsList.length) return
             return new Promise((resolve) =>{
                 setTimeout(() => {
@@ -57,15 +56,16 @@ export default new Vuex.Store({
                         items.push({
                             date: "05.08.2021",
                             category: "Sport",
-                            value: i
+                            value: i,
+                            id: i+1
                         })
                     }
                     resolve(items)
                 }, 2000)
             })
             .then(res => commit('setPaymentListData', res))
-        }*/
-        fetchData({commit}){
+        }
+        /*fetchData({commit}){
             if(this.state.paymentsList.length) return
             return new Promise((resolve) =>{
                 setTimeout(() => {
@@ -94,6 +94,6 @@ export default new Vuex.Store({
                 }, 1000)
             })            
             .then(res => commit('setPaymentListData', res),)
-        }
+        }*/
     }
 })
