@@ -7,19 +7,24 @@
                 {{ option }}
             </option>
         </select>
-        <!--<input type="text" v-model="category" placeholder="category"/>-->
-        <button @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Add</button>
+        <button @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Edit</button>
     </div>
 </template>
 <script>
 import {mapActions} from 'vuex'
+
 export default {
     name: 'AddPaymentForm',
+    props: {
+        id: {
+            type: Number,
+        },
+    },
     data(){
         return{
-            value: '',
-            category: '',
-            date: '',
+            date: this.$store.state.paymentsList[this.id].date,
+            value: this.$store.state.paymentsList[this.id].value,
+            category: this.$store.state.paymentsList[this.id].category
         }
     },
     computed: {
@@ -32,9 +37,7 @@ export default {
         },
         options(){
             return this.$store.getters.getCategories
-        },
-        categoryList(){
-            return this.options.map(category => category.toLowerCase())
+            //return this.$store.state.categories
         },
         isDisabled(){
             return !(this.value && this.category)
@@ -45,28 +48,20 @@ export default {
             'fetchCategoryList'
         ]),
         onSave(){
-            const { value, category } = this
+            const { id, value, category } = this
             const data = {
-                id: this.$store.state.paymentsList.length,
+                id,
                 date: this.date || this.getCurrentDate,
                 value,
                 category
             }
-            console.log('emit: addNewPayment',data)
-            //this.$emit('addNewPayment', data)
-            this.$store.commit('addDataToPaymentList', data)
+            console.log('emit: editNewPayment', data)
+            this.$store.commit('editDataPayment', data)
             this.$modal.hide()
         },
     },
-    async created(){
-        await this.fetchCategoryList()
-        if(this.$route?.params?.category){
-            const id = this.categoryList.indexOf(this.$route.params.category.toLowerCase())
-            if (id !== -1) this.category = this.options[id]
-            else console.log('нет такой категории')
-            this.date = this.getCurrentDate
-            this.value = +this.$route.query.value
-        }
+    created(){
+        this.fetchCategoryList()
     },
 }
 </script>

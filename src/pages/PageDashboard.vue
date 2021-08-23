@@ -4,11 +4,6 @@
         <div :class="[$style.title]">My personal costs</div>
       </header>
       <div :class="[$style.content]">
-        <button @click="showForm">
-          Add New Cost
-        </button>
-      </div>
-      <div :class="[$style.content]">
         <payments-display :list="listOnPage" :elsPerPage="paymentsPerPage"/>
       </div>
       <div :class="[$style.content]">
@@ -20,15 +15,18 @@
       <!--<div :class="[$style.content]">
         <add-category-form />
       </div>-->
-      <div :class="[$style.content]" v-show="show">
-        <add-payment-form @addNewPayment="addData"/>
+      <!-- <div :class="[$style.content]" v-show="show">
+        <add-payment-form @addNewPayment="addData" />
+      </div> -->
+      <div :class="[$style.content]">
+        <button @click="showCategoryFormFn">Add category</button>
+        <button @click="showPaymentFormFn">Add payment</button>
       </div>
     </div>
 </template>
 
 <script>
 import { mapMutations, mapGetters, mapActions } from 'vuex';
-import AddPaymentForm from '../components/AddPaymentForm.vue';
 import PaymentsDisplay from '../components/PaymentsDisplay.vue';
 import Pagination from '../components/Pagination.vue';
 //import AddCategoryForm from '../components/AddCategoryForm.vue';
@@ -37,16 +35,17 @@ export default {
   name: 'Dashboard',
   components: {
     PaymentsDisplay,
-    AddPaymentForm,
     Pagination,
     //AddCategoryForm,
   },
 data(){
     return{
       page: 'dashboard',
-      show: false,
       paymentsPerPage: 3,
       curPage: 1,
+      showPaymentForm: false,
+      modalSettings: {
+      },
     }
   },
   computed: {
@@ -64,15 +63,10 @@ data(){
   methods:{
     ...mapMutations({
       loadData: 'setPaymentListData',
-      addDataToStore: 'addDataToPaymentList',
     }),
     ...mapActions({
       fetchListData: 'fetchData'
     }),
-    addData(newPayment){
-      this.addDataToStore(newPayment)
-      console.log(newPayment)
-    },
     fetchData(){
       return[
         {
@@ -92,11 +86,14 @@ data(){
         },
       ]
     },
-    showForm(){
-      this.show = !this.show;
-    },
     onGoToPage(page){
       this.curPage = page
+    },
+    showPaymentFormFn() {
+      this.$modal.show('addPaymentForm', {header: 'Add Payment Form'})
+    },
+    showCategoryFormFn(){
+      this.$modal.show('addCategoryForm', {header: 'Add new category'})
     },
     /* setPage(){
       this.page = location.pathname.slice(1)
@@ -162,5 +159,6 @@ button {
     border: none;
     color: #fff;
     cursor: pointer;
+    margin: 10px;
 }
 </style>

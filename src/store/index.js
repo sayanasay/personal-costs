@@ -11,21 +11,29 @@ export default new Vuex.Store({
         page: 1
     },
     mutations: {
-        setPaymentListData(state, payload){
+        setPaymentListData(state, payload) {
             state.paymentsList = payload
         },
         addDataToPaymentList(state, payload) {
             state.paymentsList.push(payload)
         },
-        setCategoriesData(state, payload){
+        setCategoriesData(state, payload) {
             state.categories = payload
         },
-        setPaymentsPage(state, payload){
+        /*setPaymentsPage(state, payload) {
             state.page = payload
-        },
+        },*/
         setNewCategory(state, payload) {
             state.categories.push(payload)
         },
+        editDataPayment(state, payload) {
+            state.paymentsList[payload.id].date = payload.date
+            state.paymentsList[payload.id].value = payload.value
+            state.paymentsList[payload.id].category = payload.category
+        },
+        deletePayment(state, payload) {
+            state.paymentsList.splice(payload,1)
+        }
     },
     getters: {
         getPaymentsList: state => state.paymentsList,
@@ -33,9 +41,9 @@ export default new Vuex.Store({
             return state.paymentsList.reduce((res, cur) => res + cur.value, 0)
         },
         getCategories: state => state.categories,
-        getPaymentsListOnPage: (state, getters) => (page) => {
+        /*getPaymentsListOnPage: (state, getters) => (page) => {
             return getters.getPaymentsList[`page${page}`]
-        },
+        },*/
     },
     actions: {
         fetchCategoryList({commit}){
@@ -43,7 +51,7 @@ export default new Vuex.Store({
                 setTimeout(() => {
                     const categories = ['Sport', 'Food', 'Education', 'Internet', 'Transport', 'Other']
                     resolve(categories)
-                }, 0)
+                }, 1000)
             })
             .then(res => commit('setCategoriesData', res))
         },
@@ -56,7 +64,7 @@ export default new Vuex.Store({
                         items.push({
                             date: "05.08.2021",
                             category: "Sport",
-                            value: i,
+                            value: i+1,
                             id: i+1
                         })
                     }

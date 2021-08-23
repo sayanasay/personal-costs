@@ -1,7 +1,7 @@
 <template>
     <div class="form">
         <input type="text" v-model="category" placeholder="category"/>
-        <button @click="onSave">Add</button>
+        <button @click="onSave">Add Category</button>
     </div>
 </template>
 <script>
