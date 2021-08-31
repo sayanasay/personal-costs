@@ -1,137 +1,140 @@
 <template>
-    <div :class="[$style.wrapper]">
-      <header>
-        <div :class="[$style.title]">My personal costs</div>
-      </header>
-      <div :class="[$style.content]">
-        <payments-display :list="listOnPage" :elsPerPage="paymentsPerPage"/>
-      </div>
-      <div :class="[$style.content]">
-        <pagination :elsPerPage="paymentsPerPage" :allEls="paymentsList.length" @goToPage="onGoToPage" :cur="curPage"/>
-      </div>
-      <div :class="[$style.content]">
-        Total: {{ getFPV }}
-      </div>
-      <!--<div :class="[$style.content]">
+  <v-container>
+    <v-row>
+      <v-col cols="12" sm="8" md="6">
+        <div class="text-h5 text-sm-h4 pb-4">My personal costs</div>
+        <v-dialog v-model="dialog" width="500">
+          <template v-slot:activator="{ on }">
+            <v-btn color="teal lighten-1" dark v-on="on">
+              Add new cost <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <add-payment-form @close="dialog = false" />
+          </v-card>
+        </v-dialog>
+
+        <div :class="[$style.wrapper]">
+          <div :class="[$style.content]">
+            <payments-display />
+          </div>
+          <div :class="[$style.content]">Total: {{ getFPV }}</div>
+          <!--<div :class="[$style.content]">
         <add-category-form />
       </div>-->
-      <!-- <div :class="[$style.content]" v-show="show">
+          <!-- <div :class="[$style.content]" v-show="show">
         <add-payment-form @addNewPayment="addData" />
-      </div> -->
-      <div :class="[$style.content]">
-        <button @click="showCategoryFormFn">Add category</button>
-        <button @click="showPaymentFormFn">Add payment</button>
-      </div>
-    </div>
+      </div> 
+          <div :class="[$style.content]">
+            <button @click="showCategoryFormFn">Add category</button>
+            <button @click="showPaymentFormFn">Add payment</button>
+          </div>-->
+        </div>
+      </v-col>
+      <v-col cols="6" sm="4" md="6">
+        <div class="text-h6 text-sm-h5 pb-4">Chart</div>
+        <chart v-if="loaded" :chart-data="chartData" :options="chartOptions" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapActions } from 'vuex';
-import PaymentsDisplay from '../components/PaymentsDisplay.vue';
-import Pagination from '../components/Pagination.vue';
+import { mapMutations, mapGetters, mapActions } from "vuex";
+import PaymentsDisplay from "../components/PaymentsDisplay.vue";
+import AddPaymentForm from "../components/AddPaymentForm.vue";
+import Chart from "../components/Chart.vue";
 //import AddCategoryForm from '../components/AddCategoryForm.vue';
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   components: {
     PaymentsDisplay,
-    Pagination,
     //AddCategoryForm,
+    AddPaymentForm,
+    Chart,
   },
-data(){
-    return{
-      page: 'dashboard',
+  data() {
+    return {
+      dialog: false,
+      page: "dashboard",
       paymentsPerPage: 3,
       curPage: 1,
       showPaymentForm: false,
-      modalSettings: {
+      modalSettings: {},
+      loaded: false,
+      chartData: {
+        labels: [],
+        datasets: [
+          {
+            label: "Data One",
+            backgroundColor: ["#f87979", "#3498DB", "#FF7F50", "#40E0D0", "#CCCCFF", "#DE3163", "#9FE2BF"],
+            data: [],
+          },
+        ],
       },
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    };
+  },
+  watch: {
+    getFPVInCategories() {
+      this.setChartData();
     }
   },
   computed: {
     ...mapGetters({
-      paymentsList:'getPaymentsList',
+      paymentsList: "getPaymentsList",
     }),
-    listOnPage() {
-      const {paymentsPerPage, curPage} = this
-      return this.paymentsList.slice(paymentsPerPage*(curPage-1), paymentsPerPage*curPage)
+    getFPV() {
+      return this.$store.getters.getFullPaymentValue;
     },
-    getFPV(){
-      return this.$store.getters.getFullPaymentValue
+    getCategories() {
+      return this.$store.getters.getCategories;
+    },
+    getFPVInCategories() {
+      return this.getCategories.map((item) =>
+        this.$store.getters.getFullPaymentValueInCategory(item)
+      );
     },
   },
-  methods:{
+  methods: {
     ...mapMutations({
-      loadData: 'setPaymentListData',
+      loadData: "setPaymentListData",
     }),
     ...mapActions({
-      fetchListData: 'fetchData'
+      fetchListData: "fetchData",
     }),
-    fetchData(){
-      return[
-        {
-          date: '28.03.2020',
-          category: 'Food',
-          value: 169,
-        },
-        {
-          date: '24.03.2020',
-          category: 'Transport',
-          value: 360,
-        },
-        {
-          date: '24.03.2020',
-          category: 'Food',
-          value: 532,
-        },
-      ]
-    },
-    onGoToPage(page){
-      this.curPage = page
-    },
     showPaymentFormFn() {
-      this.$modal.show('addPaymentForm', {header: 'Add Payment Form'})
+      this.$modal.show("addPaymentForm", { header: "Add Payment Form" });
     },
-    showCategoryFormFn(){
-      this.$modal.show('addCategoryForm', {header: 'Add new category'})
+    showCategoryFormFn() {
+      this.$modal.show("addCategoryForm", { header: "Add new category" });
     },
-    /* setPage(){
-      this.page = location.pathname.slice(1)
-    }, */
+    setChartData() {
+      this.chartData.labels = this.getCategories;
+      this.chartData.datasets[0].data = this.getFPVInCategories;
+    },
   },
-  async created(){
-    //this.paymentsList = this.fetchData()
-    //this.$store.commit('setPaymentListData', this.fetchData())
-    //this.loadData(this.fetchData())
-    //this.$store.dispatch('fetchData')
-    await this.fetchListData()
-    if(this.$route?.params?.page){
-      this.onGoToPage(this.$route.params.page)
+  async mounted() {
+    this.loaded = false
+    try {
+      await this.fetchListData();
+      this.setChartData();
+      this.loaded = true;
     }
-    if(this.$route?.params?.category){
-      this.show = true
+    catch (e) {
+      console.log(e)
     }
   },
-  mounted(){
-    /* const links = document.querySelectorAll('a')
-    links.forEach(link => {
-      link.addEventListener('click', event => {
-        event.preventDefault()
-        history.pushState({}, '', link.href)
-        this.setPage()
-        console.log(link.href)
-      })
-    })
-    window.addEventListener('popstate', this.setPage) */
-    /*this.setPage()
-    window.addEventListener('hashchange', () => {
-      this.setPage()
-    })*/
+  beforeUpdate() {
+    this.paymentsList.forEach((el, id) => {
+      el.id = id + 1;
+    });
   },
-  beforeUpdate(){
-    this.paymentsList.forEach((el, id) => { el.id = id+1 })
-  },
-}
+};
 </script>
 
 <style lang="scss" module>
@@ -143,22 +146,12 @@ data(){
   color: #2c3e50;
   margin-top: 60px;
 }
-.wrapper{
+.wrapper {
   display: block;
   height: 100%;
 }
-.title{
-  font-size: 20px;
-}
-.content{
+
+.content {
   padding-top: 30px;
-}
-button {
-    background: #00a6a6;
-    padding: 10px 14px;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    margin: 10px;
 }
 </style>

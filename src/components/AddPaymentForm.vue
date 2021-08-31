@@ -1,15 +1,18 @@
 <template>
-    <div class="form">
-        <input type="text" v-model="date" placeholder="date"/>
+    <v-card class="text-left pa-8">
+        <v-text-field v-model="date" label="date" />
+        <v-text-field v-model.number="value" label="value" />
+        <v-select v-model="category" label="category" :items="options" />
+        <v-btn @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Add</v-btn>
+        <!--<input type="text" v-model="date" placeholder="date"/>
         <input type="number" v-model.number="value" placeholder="value"/>
         <select v-model="category" v-if="options">
             <option v-for="option in options" :value="option" :key="option">
                 {{ option }}
             </option>
-        </select>
-        <!--<input type="text" v-model="category" placeholder="category"/>-->
-        <button @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Add</button>
-    </div>
+        </select> 
+        <button @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Add</button> -->
+    </v-card>
 </template>
 <script>
 import {mapActions} from 'vuex'
@@ -55,7 +58,8 @@ export default {
             console.log('emit: addNewPayment',data)
             //this.$emit('addNewPayment', data)
             this.$store.commit('addDataToPaymentList', data)
-            this.$modal.hide()
+            // this.$modal.hide()
+            this.$emit('close')
         },
     },
     async created(){
