@@ -8,8 +8,8 @@ const router = new Router({
     routes: [
         {
             path: '/',
-            component: () => import(/*webpackChunkName:"Login" */'../pages/PageLogin'),
-            name: 'Login'
+            component: () => import(/*webpackChunkName:"Login" */'../pages/PageDashboard'),
+            name: 'Dashboard'
         },
         {
             path: '/dashboard',

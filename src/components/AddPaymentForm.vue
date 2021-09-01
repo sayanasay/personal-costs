@@ -4,14 +4,6 @@
         <v-text-field v-model.number="value" label="value" />
         <v-select v-model="category" label="category" :items="options" />
         <v-btn @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Add</v-btn>
-        <!--<input type="text" v-model="date" placeholder="date"/>
-        <input type="number" v-model.number="value" placeholder="value"/>
-        <select v-model="category" v-if="options">
-            <option v-for="option in options" :value="option" :key="option">
-                {{ option }}
-            </option>
-        </select> 
-        <button @click="onSave" :disabled="isDisabled" :class="{'disable-btn': isDisabled}">Add</button> -->
     </v-card>
 </template>
 <script>
@@ -56,9 +48,7 @@ export default {
                 category
             }
             console.log('emit: addNewPayment',data)
-            //this.$emit('addNewPayment', data)
             this.$store.commit('addDataToPaymentList', data)
-            // this.$modal.hide()
             this.$emit('close')
         },
     },

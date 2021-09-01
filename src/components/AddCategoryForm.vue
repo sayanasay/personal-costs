@@ -1,8 +1,8 @@
 <template>
-    <div class="form">
-        <input type="text" v-model="category" placeholder="category"/>
-        <button @click="onSave">Add Category</button>
-    </div>
+    <v-card class="text-left pa-8">
+        <v-text-field v-model="category" label="category" />
+        <v-btn @click="onSave">Add Category</v-btn>
+    </v-card>
 </template>
 <script>
 export default {
@@ -12,25 +12,14 @@ export default {
             category: '',
         }
     },
-    computed: {
-
-    },
     methods: {
         onSave(){
             this.$store.commit('setNewCategory', this.category)
+            this.$emit('close')
         },
     },
 }
 </script>
 <style scoped>
-    .form {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    input {
-        border: 1px solid #b8b8b8;
-        margin-bottom: 10px;
-        padding: 8px;
-    }
+
 </style>

@@ -73,7 +73,6 @@ export default new Vuex.Store({
             .then(res => commit('setPaymentListData', res))
         },
         addData({commit}, payload){
-            console.log(commit)
             commit('addDataToPaymentList', payload)
         }
     }
