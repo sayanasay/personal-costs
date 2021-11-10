@@ -2,7 +2,8 @@
 
 ## About
 ```
-Учебный проект на Vue.js. Приложение для учета расходов. В проекте использованы библиотеки: Vue Router, Vuex, UI библиотека Vuetify, vue-chartjs
+Учебный проект на Vue.js. Приложение для учета расходов.
+В проекте использованы библиотеки: Vue Router, Vuex, UI библиотека Vuetify, vue-chartjs
 ```
 
 ## Project setup
